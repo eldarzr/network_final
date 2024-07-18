@@ -15,7 +15,7 @@ def simulate_ddos(attack_intensity, num_subnets, overlap_ratio):
 def main():
     st.title('DNS DDoS Attack Simulation and HHH Explanation')
     
-    st.header('Task 7: DDoS Attack Simulation')
+    st.header('Task 7: proxy DDoS Attack Simulation')
     
     attack_intensity = st.slider('Attack Intensity (packets/sec)', 10, 1000, 100)
     num_subnets = st.slider('Number of Attacking Subnets', 1, 10, 3)
