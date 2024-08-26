@@ -27,16 +27,11 @@ def page_hhh_explanation():
         NXD detection is crucial in identifying DNS-based attacks, such as DDoS (Distributed Denial of Service) attacks, where attackers flood a DNS server with requests for non-existent domains.
 
         ### NXD Detection
-        In this project, we implements a DNS protection mechanism that monitors the ratio of NXD responses to legitimate DNS queries. A high NXD ratio may indicate an ongoing attack.
+        In this project, we implement a DNS protection mechanism that monitors the ratio of NXD responses to legitimate DNS queries. A high NXD ratio may indicate an ongoing attack.
         - The algorithm logs normal traffic patterns and uses this baseline to detect anomalies. When the NXD ratio exceeds a predefined threshold, the system considers it a potential attack.
 
         ## DNS Protection Mechanism
         The DNS protection mechanism in this project is designed to safeguard DNS servers from DDoS attacks, particularly those involving Non-Existent Domain (NXD) queries.
-
-        ### Blacklist and Whitelist
-        - **Dynamic Lists**: The algorithm uses two lists: a blacklist and a whitelist. The blacklist contains IP addresses that are suspected of being involved in an attack, while the whitelist contains IP addresses identified as legitimate.
-        - **Use of RHHH (Randomized Hierarchical Heavy Hitters)**: The algorithm leverages the RHHH technique to maintain and update these lists. It tracks the hierarchical heavy hitters separately for legitimate traffic and suspected attack traffic.
-        - **List Management**: The algorithm dynamically updates these lists as it monitors incoming DNS queries. IP addresses can be added to or removed from these lists based on their behavior over time.
 
         ### How the Algorithm Works:
         1. **Monitoring Traffic with RHHH**:
@@ -49,25 +44,25 @@ def page_hhh_explanation():
            - A high NXD ratio may indicate that the IP is generating malicious traffic, possibly part of a DDoS attack.
            - The RHHH algorithm helps aggregate and identify IP prefixes that are generating a significant number of NXD responses, which can then be flagged as suspicious.
 
-        3. **Deciding on Blocking or Allowing Traffic**:
-           - **Normal Conditions**: Under normal conditions, the algorithm primarily monitors and logs traffic, updating the blacklist and whitelist using the insights provided by the RHHH algorithm.
+        3. **Deciding on Blocking Traffic**:
+           - **Normal Conditions**: Under normal conditions, the algorithm primarily monitors and logs traffic, updating the counters for legitimate and suspicious traffic.
            - **During an Attack**:
-             - If the NXD ratio for a given IP exceeds a predefined threshold, the algorithm considers this IP to be part of a potential attack.
-             - The IP address is then added to the blacklist, and all future queries from this IP are blocked. The decision is based on the hierarchical analysis performed by the RHHH.
-             - Conversely, if the NXD ratio remains low, the IP may be added to or maintained on the whitelist, ensuring its queries are allowed.
+             - If the overall NXD ratio exceeds a predefined upper threshold, the algorithm considers the system to be under attack.
+             - Similarly, if the NXD ratio for a specific IP exceeds the upper attack threshold ratio, and an attack is suspected, the IP will be blocked.
+             - Conversely, if the overall NXD ratio falls below the lower threshold, the system considers the traffic to be legitimate. Likewise, if the NXD ratio for a specific IP falls below the lower attack threshold ratio, and no attack is suspected, the IP will be allowed.
+           - **Blocking Traffic**: Traffic that is determined to be part of an attack based on these thresholds is blocked and not logged further. This prevents attack traffic from affecting system performance or storage.
 
-        4. **Handling Expired or Stale Entries**:
-           - To prevent the blacklist and whitelist from becoming outdated, the algorithm periodically reviews and cleans up these lists.
-           - IP addresses that have not been active for a certain period or whose behavior has normalized may be removed from the blacklist.
-           - The whitelist is also periodically reviewed to ensure that it only contains currently active and legitimate IP addresses.
+        4. **Handling Expired or Stale Data**:
+           - To prevent the detection counters from becoming outdated, the algorithm periodically applies an aging factor to reduce the impact of older data.
+           - This ensures that recent traffic patterns are given more weight in the detection process.
 
         ### Attack Response
-        - **Selective Blocking with RHHH**: When an attack is detected, the algorithm selectively blocks traffic based on the blacklist, minimizing disruption to legitimate users. The use of RHHH ensures that only significant attack sources are targeted.
-        - **Protection Against Collateral Damage**: The whitelist, maintained with the help of RHHH, ensures that legitimate traffic continues to flow, even during an attack, reducing the risk of collateral damage.
-        - **Adaptation to Traffic Patterns**: As traffic patterns evolve, the algorithm adapts by dynamically updating the blacklist and whitelist using RHHH, ensuring ongoing protection against both known and emerging threats.
+        - **Selective Blocking with RHHH**: When an attack is detected, the algorithm selectively blocks traffic based on the detection of suspicious patterns, minimizing disruption to legitimate users. The use of RHHH ensures that only significant attack sources are targeted.
+        - **Protection Against Collateral Damage**: The algorithm ensures that legitimate traffic continues to flow, even during an attack, reducing the risk of collateral damage.
+        - **Adaptation to Traffic Patterns**: As traffic patterns evolve, the algorithm adapts by dynamically updating its detection counters using RHHH, ensuring ongoing protection against both known and emerging threats.
 
         The overall goal of this DNS protection mechanism is to efficiently block malicious traffic while allowing legitimate queries to pass through, maintaining the availability and integrity of the DNS service even under attack conditions.
-    
+
         ## Implementation in This Project
         ### Simulation of DDoS Attacks
         - We simulate NXD attacks by generating DNS traffic traces, including legitimate and malicious requests. 

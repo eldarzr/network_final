@@ -29,7 +29,8 @@ class SpaceSaving:
         return self.legit_traffic  # Retrieve legitimate traffic data
 
 class RHHH:
-    def __init__(self, hierarchy_levels, k, delta=0.05):
+    def __init__(self, hierarchy_levels, k, aging=0.5, delta=0.05):
+        self.aging = aging
         self.hierarchy_levels = hierarchy_levels
         self.hh_algorithms = [SpaceSaving(k) for _ in range(hierarchy_levels)]
         self.V = hierarchy_levels
@@ -37,19 +38,15 @@ class RHHH:
         self.attack_detection_threshold = 0.05  # Set this based on your anomaly detection needs
 
     def update(self, packet, legitimate=False):
-        level = random.randint(0, self.V - 1)
+        level = random.randint(0, self.V-1)
         prefix = self.get_prefix(packet, level)
         self.hh_algorithms[level].increment(prefix, legitimate=legitimate)
 
     def get_prefix(self, packet, level):
         parts = packet.split('.')
-        pp = '.'.join(parts[:level + 1])
+        pp = '.'.join(parts[:level+1])
         return pp
     
-    def func(self, pref):
-        return sum([self.hh_algorithms[p_level].get_counters().get(pref, 0) for p_level in range(self.hierarchy_levels - 1, -1, -1)])
-
-
     def calc_pred(self, p, P):
         level = len(p.split('.')) - 1
         sum = 0
@@ -77,49 +74,12 @@ class RHHH:
                     hhh_set.add((prefix,conditioned_frequency))
         return hhh_set
 
-    def get_legitimate_traffic_sources(self):
-        legitimate_sources = set()
-        for level in range(self.hierarchy_levels):
-            legit_traffic = self.hh_algorithms[level].get_legit_traffic()
-            legitimate_sources.update(legit_traffic.keys())
-        return legitimate_sources
+    def get_prefix_count(self, pref):
+        return sum([self.hh_algorithms[p_level].get_counters().get(self.get_prefix(pref, p_level), 0) for p_level in range(0, self.hierarchy_levels)])
+        # return sum([self.hh_algorithms[p_level].get_counters().get(pref, 0) for p_level in range(self.hierarchy_levels - 1, -1, -1)])
 
-    def detect_attack_sources(self, legitimate_sources):
-        attack_sources = set()
-        for level in range(self.hierarchy_levels):
-            all_counters = self.hh_algorithms[level].get_counters()
-            for prefix in all_counters:
-                if prefix not in legitimate_sources:
-                    attack_sources.add(prefix)
-        return attack_sources
-
-
-# # Example Usage
-# hierarchy_levels = 4
-# k = 10
-# theta = 0.1
-# delta = 0.05
-
-# rhhh = RHHH(hierarchy_levels, k, delta)
-
-# file_path = 'attacked.csv'
-# dataset = pd.read_csv(file_path)
-
-# packets = dataset['Source'].to_list()
-
-# # Assume first 100 packets are legitimate
-# for packet in packets[:1000]:
-#     rhhh.update(packet, legitimate=True)
-
-# # Rest packets are mixed (attack and legitimate)
-# for packet in packets[1000:]:
-#     rhhh.update(packet)
-
-# hhh_result = rhhh.output(theta)
-# print("Hierarchical Heavy Hitters:", hhh_result)
-
-# legitimate_sources = rhhh.get_legitimate_traffic_sources()
-# print("Legitimate Traffic Sources:", legitimate_sources)
-
-# attack_sources = rhhh.detect_attack_sources(legitimate_sources)
-# print("Potential Attack Sources:", attack_sources)
+    def decrease(self):
+        for level in range(0, self.hierarchy_levels):
+            hh_counters = self.hh_algorithms[level].get_counters()
+            for prefix in hh_counters.keys():
+                hh_counters[prefix] = int(hh_counters[prefix] * self.aging)

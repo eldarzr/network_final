@@ -41,7 +41,7 @@ def generate_botnets(data, botnet_num, shared_subnet):
         while len(ip) < 4:
             ip.append(str(random.randint(0,255)))
         ret.append('.'.join(ip))
-    return ret
+    return ret, '.'.join(sub)
 
 
 # Generate attacker records
@@ -49,7 +49,7 @@ def generate_attacker_records(original_data, num_records, attack_range, start, b
     attacker_data = []
     splitted_data = original_data[start:num_records]
     record = splitted_data.sample().iloc[0]
-    botnets_addresses = generate_botnets(original_data, botnet_num, shared_subnet)
+    botnets_addresses, subnet = generate_botnets(original_data, botnet_num, shared_subnet)
     botnets_nxd = generate_ndx(botnet_num)
     botnets = list(zip(botnets_addresses, botnets_nxd))
 
@@ -59,7 +59,7 @@ def generate_attacker_records(original_data, num_records, attack_range, start, b
         # fake_name = generate_fake_domain(record['Name'])
         attacker_record = [record['Time'], source, record['Destination'], fake_name, False]
         attacker_data.append(attacker_record)
-    return attacker_data, botnets
+    return attacker_data, botnets_addresses, subnet
 
 # Combine original data with attacker data
 def combine_data(original_data, attacker_data):
@@ -70,8 +70,8 @@ def combine_data(original_data, attacker_data):
 
 def create_attack_dataset(packets_num, botnet_num, shared_subnet, attack_packets_num, nxd_num, legit_volume):
     original_data = load_data('new_ip.csv')
-    attacker_data, botnets = generate_attacker_records(original_data, packets_num, attack_packets_num, int(packets_num * legit_volume), botnet_num, shared_subnet, nxd_num)
+    attacker_data, botnets, subnet = generate_attacker_records(original_data, packets_num, attack_packets_num, int(packets_num * legit_volume), botnet_num, shared_subnet, nxd_num)
     combined_data = combine_data(original_data, attacker_data)
     sorted_dataset = combined_data.sort_values(by='Time')
-    return sorted_dataset, botnets
+    return sorted_dataset, botnets, subnet
 
