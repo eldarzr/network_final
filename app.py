@@ -137,9 +137,9 @@ def page_attack_simulation():
                 min_value=1, max_value=4, value=2,
                 help="Specifies the number of levels in the IP prefix hierarchy that the RHHH algorithm uses to analyze and track traffic patterns."
             )
-            k = st.slider(
+            k = st.number_input(
                 'Space Saving Parameter k', 
-                min_value=1, max_value=20, value=10,
+                value=10,
                 help="Controls the space-saving algorithm in RHHH. A higher value allows the algorithm to track a greater number of heavy hitters, which are significant traffic sources."
             )
             upper_threshold_nxd_ratio = st.slider(
@@ -155,12 +155,12 @@ def page_attack_simulation():
             upper_attack_threshold_ratio = st.slider(
                 'Upper Threshold NXD Ratio per IP', 
                 min_value=0.01, max_value=1.0, value=0.6,
-                help="Sets the ratio of NXD responses to total packets for each IP. If the ratio for an IP exceeds this threshold and an attack is suspected, the IP will be blocked."
+                help="Sets the ratio of NXD responses to total packets for each IP. If the ratio for an IP is below this threshold and no attack is suspected, the IP will be allowed."
             )
             lower_attack_threshold_ratio = st.slider(
                 'Lower Threshold NXD Ratio per IP', 
                 min_value=0.01, max_value=1.0, value=0.3,
-                help="Sets the ratio of NXD responses to total packets for each IP. If the ratio for an IP is below this threshold and no attack is suspected, the IP will be allowed."
+                help="Sets the ratio of NXD responses to total packets for each IP. If the ratio for an IP exceeds this threshold and an attack is suspected, the IP will be blocked."
             )
             list_expiry_limit = st.slider(
                 'Expiry Limit', 

@@ -48,8 +48,8 @@ def page_hhh_explanation():
            - **Normal Conditions**: Under normal conditions, the algorithm primarily monitors and logs traffic, updating the counters for legitimate and suspicious traffic.
            - **During an Attack**:
              - If the overall NXD ratio exceeds a predefined upper threshold, the algorithm considers the system to be under attack.
-             - Similarly, if the NXD ratio for a specific IP exceeds the upper attack threshold ratio, and an attack is suspected, the IP will be blocked.
-             - Conversely, if the overall NXD ratio falls below the lower threshold, the system considers the traffic to be legitimate. Likewise, if the NXD ratio for a specific IP falls below the lower attack threshold ratio, and no attack is suspected, the IP will be allowed.
+             - Similarly, if the NXD ratio for a specific IP exceeds the lower attack threshold ratio, and an attack is suspected, the IP will be blocked.
+             - Conversely, if the overall NXD ratio falls below the lower threshold, the system considers the traffic to be legitimate. Likewise, if the NXD ratio for a specific IP falls below the upper attack threshold ratio, and no attack is suspected, the IP will be allowed.
            - **Blocking Traffic**: Traffic that is determined to be part of an attack based on these thresholds is blocked and not logged further. This prevents attack traffic from affecting system performance or storage.
 
         4. **Handling Expired or Stale Data**:
@@ -72,6 +72,7 @@ def page_hhh_explanation():
         ### Visualization and Analysis
         - This project provides visualizations for the distribution of packets over time, the performance of the detection algorithm (TP, FP, TN, FN), and a comparison of legitimate versus attack traffic.
         - The top 5 IPs by traffic volume are also displayed to help identify the most significant sources of traffic during the simulation.
+        - The subnets and botnets IPs are also displayed.
 
         ## Related Concepts from the Paper
         The paper on HHH highlights the challenges of real-time network monitoring, especially in detecting anomalies like DDoS attacks. 
