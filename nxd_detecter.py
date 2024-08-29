@@ -90,9 +90,9 @@ class DNSProtection:
         attack_freq = self.rh_attack.get_prefix_count(source)
 
         if self.is_under_attack():
-            legit_freq *= self.upper_attack_threshold_ratio
-        else:
             legit_freq *= self.lower_attack_threshold_ratio
+        else:
+            legit_freq *= self.upper_attack_threshold_ratio
         # Compare adjusted conditioned frequencies
         return attack_freq > legit_freq
 

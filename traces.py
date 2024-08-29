@@ -69,4 +69,11 @@ def map_ips_to_random():
 
     print()
 
-map_ips_to_random()
+# map_ips_to_random()
+
+nums = [f'{i}.{i}.{i}.{i}' for i in range(100)]
+nums = pd.DataFrame(nums)
+nums2 = nums.sample()
+nums3 = nums.sample(2)
+for i in nums3.values:
+    print(i)
