@@ -1,11 +1,9 @@
 import streamlit as st
-import pandas as pd
-import matplotlib.pyplot as plt
-import numpy as np
-from hhh import RHHH
 from attack_traces import *
 import nxd_detecter as nxd
 from explain import page_hhh_explanation 
+from plot_statistics import plot_statistics
+from algo_explain import algo_explain
 
 def simulate_ddos_attack(hierarchy_levels, upper_threshold_nxd_ratio, lower_threshold_nxd_ratio,
                     upper_attack_threshold_ratio, lower_attack_threshold_ratio, list_expiry_limit,
@@ -16,75 +14,11 @@ def simulate_ddos_attack(hierarchy_levels, upper_threshold_nxd_ratio, lower_thre
                     upper_attack_threshold_ratio, lower_attack_threshold_ratio, list_expiry_limit, aging, k, list_of_dicts)
     return nxd_sim, list_of_dicts
 
-def colored_ip_line(ip, sub_len):
-    part1 = '' if sub_len == 0 else '.'.join(ip.split('.')[:sub_len])
-    part2 = '' if sub_len == 4 else '.'.join(ip.split('.')[sub_len:])
-    # splited_ip = [('.'.join(ip.split('.')[:subnet_len]), '.'.join(ip.split('.')[subnet_len:])) for ip in botnets]
-    return f"<span style='color: red;'>{part1}</span>.<span style='color: blue;'>{part2}</span>"
-
-def plot_statistics(packets, tp, fp, tn, fn):
-    packet_times = {}
-    packet_sources = {}
-    for packet in packets:
-        time = round(packet['Time'], 2)
-        if time not in packet_times:
-            packet_times[time] = 0
-        if packet['Source'] not in packet_sources:
-            packet_sources[packet['Source']] = 0
-        packet_times[time] += 1
-        packet_sources[packet['Source']] += 1
-
-    # Packet Distribution over Time
-    plt.figure(figsize=(10, 6))
-    plt.plot(list(packet_times.keys()), list(packet_times.values()), color='blue')
-    plt.title('Packet Distribution Over Time')
-    plt.xlabel('Time')
-    plt.ylabel('Frequency')
-    plt.grid(True)
-    st.pyplot(plt.gcf())  # Use st.pyplot to display the plot in Streamlit
-
-    # Detection Performance with values
-    plt.figure(figsize=(6, 4))
-    performance_labels = ['TP', 'FP', 'TN', 'FN']
-    performance_values = [tp, fp, tn, fn]
-    plt.bar(performance_labels, performance_values, color=['green', 'red', 'green', 'red'])
-    for i, v in enumerate(performance_values):
-        plt.text(i, v + max(performance_values) * 0.01, str(v), ha='center')
-    plt.title('Detection Performance')
-    plt.ylabel('Count')
-    st.pyplot(plt.gcf())
-
-    # Legitimate vs Attack Traffic
-    legitimate_traffic = [p for p in packets if p['Legitimate']]
-    attack_traffic = [p for p in packets if not p['Legitimate']]  # Adjusted this line
-    plt.figure(figsize=(6, 4))
-    plt.bar(['Legitimate Traffic', 'Attack Traffic'], [len(legitimate_traffic), len(attack_traffic)], color=['blue', 'orange'])
-    plt.title('Legitimate vs Attack Traffic')
-    plt.ylabel('Count')
-    st.pyplot(plt.gcf())
-
-    # Additional Information (shared subnet)
-    subnets = st.session_state['subnet']
-    st.write("### Shared Subnet:")
-    for ip in subnets:
-        st.write(ip)
-
-    # Additional Information (botnets)
-    botnets = st.session_state['botnets']
-    st.write("### Botnets:")
-    subnet_len = 0 if len(subnets) == 0 or len(subnets[0]) == 0 else len(subnets[0].split('.'))
-    # splited_ip = [('.'.join(ip.split('.')[:subnet_len]), '.'.join(ip.split('.')[subnet_len:])) for ip in botnets]
-    for ip in botnets:
-        st.markdown(colored_ip_line(ip, subnet_len), unsafe_allow_html=True)
-
-    # Additional Information (Top 5 IPs by Traffic)
-    top_ips = dict(sorted(packet_sources.items(), key=lambda item: item[1], reverse=True)[:min(5, len(packet_sources))])
-    st.write("### Top 5 IPs by Traffic:")
-    for ip, traffic_count in top_ips.items():
-        st.write(f"{ip}: {traffic_count}")
-
 def page_attack_simulation():
     st.title('Attack Simulation')
+
+    with st.expander("How our algorithm works"):
+        algo_explain()
 
     with st.expander("Create Traces"):
         packets_num = st.slider(

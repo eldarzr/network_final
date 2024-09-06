@@ -45,9 +45,6 @@ def generate_attacker_records(original_data, num_records, attack_range, start, b
     record = splitted_data.sample().iloc[0]
     botnets_addresses, subnet = generate_botnets(original_data, botnet_num, shared_subnet, subnet_num)
     botnets_nxd = generate_nxd_urls(botnet_num)
-    print('*********************')
-    print(botnets_nxd)
-    print('*********************')
     # botnets = list(zip(botnets_addresses, botnets_nxd))
 
     for _ in range(int(num_records*attack_range)):
@@ -72,4 +69,3 @@ def create_attack_dataset(packets_num, botnet_num, shared_subnet, subnet_num, at
     combined_data = combine_data(original_data[:packets_num], attacker_data)
     sorted_dataset = combined_data.sort_values(by='Time')
     return sorted_dataset, botnets, subnet
-

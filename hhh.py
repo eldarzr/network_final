@@ -67,8 +67,8 @@ class RHHH:
                 conditioned_frequency = count + self.calc_pred(prefix, hhh_set)
                 adjusted_conditioned_frequency = conditioned_frequency + 2 * Z * math.sqrt(N * self.V)
 
-                print(f"Prefix: {prefix}, Count: {count}, Conditioned Frequency: {conditioned_frequency}, "
-                      f"Adjusted Conditioned Frequency: {adjusted_conditioned_frequency}, Threshold: {theta * N}")
+                # print(f"Prefix: {prefix}, Count: {count}, Conditioned Frequency: {conditioned_frequency}, "
+                #       f"Adjusted Conditioned Frequency: {adjusted_conditioned_frequency}, Threshold: {theta * N}")
 
                 if adjusted_conditioned_frequency >= theta * N:
                     hhh_set.add((prefix,conditioned_frequency))

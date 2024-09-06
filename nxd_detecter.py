@@ -11,9 +11,6 @@ class DNSProtection:
         self.upper_attack_threshold_ratio = upper_attack_threshold_ratio
         self.lower_attack_threshold_ratio = lower_attack_threshold_ratio
         self.list_expiry_limit = list_expiry_limit
-        self.legitimate_traffic = defaultdict(int)
-        self.blacklist = defaultdict(int)
-        self.whitelist = defaultdict(int)
         self.rh_legit = RHHH(hierarchy_levels, k, aging)
         self.rh_attack = RHHH(hierarchy_levels, k, aging)
         self.total_queries = 0
