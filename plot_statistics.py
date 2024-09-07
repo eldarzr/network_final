@@ -50,7 +50,7 @@ def plot_statistics(packets, tp, fp, tn, fn):
             ax.text(j, i, labels[i, j], ha='center', va='center')
 
     # Set axis labels
-    ax.set_xticklabels([''] + ['Legitimate', 'malicious'])
+    ax.set_xticklabels([''] + ['Legitimate', 'Malicious'])
     ax.set_yticklabels([''] + ['Alow', 'Block'])
 
     # Show the plot
