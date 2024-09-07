@@ -50,7 +50,7 @@ def plot_statistics(packets, tp, fp, tn, fn):
             ax.text(j, i, labels[i, j], ha='center', va='center')
 
     # Set axis labels
-    ax.set_xticklabels([''] + ['Legitimate', 'Attack'])
+    ax.set_xticklabels([''] + ['Legitimate', 'malicious'])
     ax.set_yticklabels([''] + ['Alow', 'Block'])
 
     # Show the plot
@@ -68,15 +68,20 @@ def plot_statistics(packets, tp, fp, tn, fn):
     # Overall Results Summary
     st.write("## Overall Results Summary")
 
-    st.write(f"Our algorithm correctly classifies **{accuracy:.4f}%** of all traffic, both legitimate and attack-related.")
-    st.write(f"Out of all the traffic flagged as an attack, **{precision:.4f}%** was indeed malicious, showing the accuracy of the algorithm in detecting attacks.")
-    st.write(f"Our algorithm captures **{recall:.4f}%** of all attack traffic, ensuring most attacks are successfully identified.")
-    st.write(f"Our algorithm correctly identifies **{specificity:.4f}%** of legitimate traffic, ensuring that real users are not mistakenly blocked.")
-    st.write(f"Our algorithm incorrectly blocks **{type_1_error:.4f}%** of legitimate traffic, flagging it as an attack by mistake.")
-    st.write(f"Our algorithm fails to block **{type_2_error:.4f}%** of attack traffic, allowing some malicious requests to pass through.")
+    st.write(f"Our algorithm correctly classifies **{(accuracy * 100):.2f}%** of all traffic, both legitimate and malicious-related.")
+    st.write(f"Out of all the traffic flagged as an malicious, **{(precision * 100):.2f}%** was indeed malicious, showing the accuracy of the algorithm in detecting malicious.")
+    st.write(f"Our algorithm captures **{(recall * 100):.2f}%** of all malicious traffic, ensuring most malicious packets are successfully identified.")
+    st.write(f"Our algorithm correctly identifies **{(specificity * 100):.2f}%** of legitimate traffic, ensuring that real users are not mistakenly blocked.")
+    st.write(f"Our algorithm incorrectly blocks **{(type_1_error * 100):.2f}%** of legitimate traffic, flagging it as an malicious by mistake.")
+    st.write(f"Our algorithm fails to block **{(type_2_error * 100):.2f}%** of malicious traffic, allowing some malicious requests to pass through.")
 
     # Metric Breakdown
     st.write("## Metric Breakdown")
+
+    st.write("TP - Number of legitimate packets sent to the DNS resolver.")
+    st.write("TN- Number of malicious packets that were blocked.")
+    st.write("FP- Number of malicious packets sent to the DNS resolver.")
+    st.write("FN- Number of legitimate packets that were blocked.")
 
     # 1. Accuracy
     st.write(f"### Accuracy: **{accuracy:.4f}**")
